@@ -41,9 +41,7 @@ pub fn check_yubikey() -> Result<YubiKeyInfo> {
         if stderr.contains("No YubiKey detected") || stderr.contains("not connected") {
             return Err(YkvcError::YubiKeyNotFound);
         }
-        return Err(YkvcError::YkmanFailed(format!(
-            "ykman info failed: {stderr}"
-        )));
+        return Err(YkvcError::YkmanFailed(format!("ykman info failed: {stderr}")));
     }
 
     let stdout = String::from_utf8_lossy(&output.stdout);
@@ -69,11 +67,7 @@ pub fn check_yubikey() -> Result<YubiKeyInfo> {
     // Check slot 2 status
     let slot2_programmed = check_slot2()?;
 
-    Ok(YubiKeyInfo {
-        serial,
-        firmware_version,
-        slot2_programmed,
-    })
+    Ok(YubiKeyInfo { serial, firmware_version, slot2_programmed })
 }
 
 /// Check if slot 2 is programmed with HMAC-SHA1 Challenge-Response
@@ -96,18 +90,16 @@ pub fn check_slot2() -> Result<bool> {
         if stderr.contains("No YubiKey detected") || stderr.contains("not connected") {
             return Err(YkvcError::YubiKeyNotFound);
         }
-        return Err(YkvcError::YkmanFailed(format!(
-            "ykman otp info failed: {stderr}"
-        )));
+        return Err(YkvcError::YkmanFailed(format!("ykman otp info failed: {stderr}")));
     }
 
     let stdout = String::from_utf8_lossy(&output.stdout);
 
     // Check if slot 2 is programmed
     // Output typically contains "Slot 2: programmed" or "Slot 2: empty"
-    Ok(stdout
-        .lines()
-        .any(|line| line.to_lowercase().contains("slot 2") && line.to_lowercase().contains("programmed")))
+    Ok(stdout.lines().any(|line| {
+        line.to_lowercase().contains("slot 2") && line.to_lowercase().contains("programmed")
+    }))
 }
 
 /// Program slot 2 with HMAC-SHA1 Challenge-Response
@@ -151,30 +143,30 @@ pub fn program_slot2(secret: Option<Vec<u8>>) -> Result<Vec<u8>> {
     // Run ykpersonalize with secret via stdin
     let child = Command::new("ykpersonalize")
         .args([
-            "-2",                      // Slot 2
-            "-ochal-resp",             // Challenge-Response mode
-            "-ochal-hmac",             // HMAC mode
-            "-ohmac-lt64",             // Less than 64 bytes output
-            "-oserial-api-visible",    // Make serial visible
-            "-y",                      // Skip confirmation
-            "-a",                      // Secret from stdin (hex format)
+            "-2",                   // Slot 2
+            "-ochal-resp",          // Challenge-Response mode
+            "-ochal-hmac",          // HMAC mode
+            "-ohmac-lt64",          // Less than 64 bytes output
+            "-oserial-api-visible", // Make serial visible
+            "-y",                   // Skip confirmation
+            "-a",                   // Secret from stdin (hex format)
         ])
         .arg(&secret_hex)
         .stdin(Stdio::null())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .spawn()
-        .map_err(|e| YkvcError::YkpersonalizeFailed(format!("Failed to execute ykpersonalize: {e}")))?;
+        .map_err(|e| {
+            YkvcError::YkpersonalizeFailed(format!("Failed to execute ykpersonalize: {e}"))
+        })?;
 
-    let output = child
-        .wait_with_output()
-        .map_err(|e| YkvcError::YkpersonalizeFailed(format!("Failed to wait for ykpersonalize: {e}")))?;
+    let output = child.wait_with_output().map_err(|e| {
+        YkvcError::YkpersonalizeFailed(format!("Failed to wait for ykpersonalize: {e}"))
+    })?;
 
     if !output.status.success() {
         let stderr = String::from_utf8_lossy(&output.stderr);
-        return Err(YkvcError::YkpersonalizeFailed(format!(
-            "ykpersonalize failed: {stderr}"
-        )));
+        return Err(YkvcError::YkpersonalizeFailed(format!("ykpersonalize failed: {stderr}")));
     }
 
     Ok(secret_bytes)
@@ -202,8 +194,8 @@ pub fn program_slot2(secret: Option<Vec<u8>>) -> Result<Vec<u8>> {
 pub fn challenge_response(challenge: &str) -> Result<Vec<u8>> {
     // ykchalresp takes challenge as command-line argument, not stdin
     let output = Command::new("ykchalresp")
-        .arg("-2")  // Slot 2
-        .arg(challenge)  // Challenge as argument
+        .arg("-2") // Slot 2
+        .arg(challenge) // Challenge as argument
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .output()
@@ -220,18 +212,15 @@ pub fn challenge_response(challenge: &str) -> Result<Vec<u8>> {
             return Err(YkvcError::Slot2NotProgrammed);
         }
 
-        return Err(YkvcError::YkchalrespFailed(format!(
-            "ykchalresp failed: {stderr}"
-        )));
+        return Err(YkvcError::YkchalrespFailed(format!("ykchalresp failed: {stderr}")));
     }
 
     // Parse hex response from stdout
     let stdout = String::from_utf8_lossy(&output.stdout);
     let response_hex = stdout.trim();
 
-    hex::decode(response_hex).map_err(|e| {
-        YkvcError::YkchalrespFailed(format!("Failed to decode hex response: {e}"))
-    })
+    hex::decode(response_hex)
+        .map_err(|e| YkvcError::YkchalrespFailed(format!("Failed to decode hex response: {e}")))
 }
 
 #[cfg(test)]
@@ -269,7 +258,7 @@ mod tests {
             firmware_version: "5.4.3".to_string(),
             slot2_programmed: true,
         };
-        let debug_str = format!("{:?}", info);
+        let debug_str = format!("{info:?}");
         assert!(debug_str.contains("12345678"));
         assert!(debug_str.contains("5.4.3"));
         assert!(debug_str.contains("true"));

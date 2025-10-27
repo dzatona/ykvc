@@ -58,8 +58,7 @@ pub fn generate_keyfile(challenge: &str, output_path: Option<PathBuf>) -> Result
     file.write_all(&response_bytes)
         .map_err(|e| YkvcError::FileError(format!("Failed to write keyfile: {e}")))?;
 
-    file.sync_all()
-        .map_err(|e| YkvcError::FileError(format!("Failed to sync keyfile: {e}")))?;
+    file.sync_all().map_err(|e| YkvcError::FileError(format!("Failed to sync keyfile: {e}")))?;
 
     // Set file permissions to 0o600 (owner read/write only)
     let mut permissions = file
@@ -122,19 +121,14 @@ mod tests {
     #[test]
     fn test_generate_keyfile_path_with_timestamp() {
         // Test that default path uses correct format
-        let timestamp = SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .unwrap()
-            .as_secs();
+        let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
         let expected = format!("ykvc_keyfile_{timestamp}.key");
 
         // Cannot test actual generation without YubiKey, but can verify path format
         assert!(expected.starts_with("ykvc_keyfile_"));
-        assert!(
-            std::path::Path::new(&expected)
-                .extension()
-                .is_some_and(|ext| ext.eq_ignore_ascii_case("key"))
-        );
+        assert!(std::path::Path::new(&expected)
+            .extension()
+            .is_some_and(|ext| ext.eq_ignore_ascii_case("key")));
     }
 
     #[test]
@@ -147,8 +141,7 @@ mod tests {
     #[test]
     fn test_timestamp_generation() {
         // Test that timestamp-based filename generation works
-        let result = SystemTime::now()
-            .duration_since(UNIX_EPOCH);
+        let result = SystemTime::now().duration_since(UNIX_EPOCH);
         assert!(result.is_ok());
 
         let timestamp = result.unwrap().as_secs();

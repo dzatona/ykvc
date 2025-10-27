@@ -22,9 +22,7 @@ fn test_cli_version() {
     let mut cmd = Command::cargo_bin("ykvc").unwrap();
     cmd.arg("--version");
 
-    cmd.assert()
-        .success()
-        .stdout(predicate::str::contains("ykvc"));
+    cmd.assert().success().stdout(predicate::str::contains("ykvc"));
 }
 
 #[test]
@@ -55,8 +53,7 @@ fn test_cli_invalid_command() {
     let mut cmd = Command::cargo_bin("ykvc").unwrap();
     cmd.arg("invalid");
 
-    cmd.assert()
-        .failure();
+    cmd.assert().failure();
 }
 
 // Note: The following tests would require YubiKey hardware or mocking:

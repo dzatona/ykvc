@@ -4,9 +4,9 @@ pub mod linux;
 pub mod macos;
 
 use crate::error::Result;
-use colored::Colorize;
 #[cfg(any(target_os = "linux", not(any(target_os = "macos", target_os = "linux"))))]
 use crate::error::YkvcError;
+use colored::Colorize;
 
 /// Required command-line dependencies (common for all platforms)
 const REQUIRED_COMMANDS: &[&str] = &["ykman", "ykpersonalize", "ykchalresp"];
@@ -164,16 +164,17 @@ mod tests {
     #[test]
     fn test_os_debug() {
         let os = OS::MacOS;
-        let debug_str = format!("{:?}", os);
+        let debug_str = format!("{os:?}");
         assert!(debug_str.contains("MacOS"));
     }
 
     #[test]
     fn test_detect_os() {
-        // This will pass on supported systems
-        let result = detect_os();
         #[cfg(target_os = "linux")]
         use crate::error::YkvcError;
+
+        // This will pass on supported systems
+        let result = detect_os();
         #[cfg(target_os = "linux")]
         assert!(result.is_ok() || matches!(result, Err(YkvcError::UnsupportedOS(_))));
         #[cfg(not(target_os = "linux"))]

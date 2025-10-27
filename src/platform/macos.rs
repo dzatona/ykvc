@@ -14,14 +14,9 @@ use std::process::Command;
 ///
 /// Returns an error if the command check fails
 pub fn check_command(cmd: &str) -> Result<bool> {
-    let output = Command::new("command")
-        .arg("-v")
-        .arg(cmd)
-        .output()
-        .map_err(|e| YkvcError::CommandFailed {
-            command: format!("command -v {cmd}"),
-            message: e.to_string(),
-        })?;
+    let output = Command::new("command").arg("-v").arg(cmd).output().map_err(|e| {
+        YkvcError::CommandFailed { command: format!("command -v {cmd}"), message: e.to_string() }
+    })?;
 
     Ok(output.status.success())
 }
@@ -42,13 +37,18 @@ pub fn check_homebrew() -> Result<bool> {
 /// Returns an error if installation fails
 pub fn install_homebrew() -> Result<()> {
     println!("{} Installing Homebrew...", "[INFO]".blue().bold());
-    println!("{} This may take a few minutes and will require your password.", "[INFO]".blue().bold());
+    println!(
+        "{} This may take a few minutes and will require your password.",
+        "[INFO]".blue().bold()
+    );
 
     let output = Command::new("/bin/bash")
         .arg("-c")
         .arg(r"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)")
         .status()
-        .map_err(|e| YkvcError::InstallationFailed(format!("Failed to start Homebrew installer: {e}")))?;
+        .map_err(|e| {
+            YkvcError::InstallationFailed(format!("Failed to start Homebrew installer: {e}"))
+        })?;
 
     if !output.success() {
         return Err(YkvcError::InstallationFailed(
@@ -109,15 +109,15 @@ pub fn install_yubikey_tools() -> Result<()> {
 
     // Install coreutils (for gshred - secure file deletion)
     println!("{} Installing coreutils (for secure file deletion)...", "[INFO]".blue().bold());
-    let coreutils_output = Command::new("brew")
-        .arg("install")
-        .arg("coreutils")
-        .status()
-        .map_err(|e| YkvcError::InstallationFailed(format!("Failed to install coreutils: {e}")))?;
+    let coreutils_output =
+        Command::new("brew").arg("install").arg("coreutils").status().map_err(|e| {
+            YkvcError::InstallationFailed(format!("Failed to install coreutils: {e}"))
+        })?;
 
     if !coreutils_output.success() {
         return Err(YkvcError::InstallationFailed(
-            "Failed to install coreutils via Homebrew. Try manually: brew install coreutils".to_string(),
+            "Failed to install coreutils via Homebrew. Try manually: brew install coreutils"
+                .to_string(),
         ));
     }
 
@@ -153,21 +153,18 @@ pub fn install_yubikey_tools() -> Result<()> {
 pub fn secure_delete(path: &std::path::Path) -> Result<()> {
     // Verify file exists
     if !path.exists() {
-        return Err(YkvcError::FileError(format!(
-            "File does not exist: {}",
-            path.display()
-        )));
+        return Err(YkvcError::FileError(format!("File does not exist: {}", path.display())));
     }
 
     // Run gshred with 10 passes, verbose, force, zero final pass, and delete
     // Use .status() instead of .output() to show progress to user
     let status = Command::new("gshred")
-        .arg("-v")          // Verbose - show progress
-        .arg("-f")          // Force - change permissions if needed
-        .arg("-z")          // Zero - final overwrite with zeros
-        .arg("-n")          // Iterations
-        .arg("10")          // 10 passes
-        .arg("-u")          // Remove file after overwriting
+        .arg("-v") // Verbose - show progress
+        .arg("-f") // Force - change permissions if needed
+        .arg("-z") // Zero - final overwrite with zeros
+        .arg("-n") // Iterations
+        .arg("10") // 10 passes
+        .arg("-u") // Remove file after overwriting
         .arg(path)
         .status()
         .map_err(|e| YkvcError::CommandFailed {
@@ -251,8 +248,8 @@ mod tests {
         // Result should either succeed or fail with CommandFailed (gshred not found)
         if let Err(e) = result {
             assert!(
-                matches!(e, YkvcError::CommandFailed { .. }) ||
-                matches!(e, YkvcError::FileError(_))
+                matches!(e, YkvcError::CommandFailed { .. })
+                    || matches!(e, YkvcError::FileError(_))
             );
         }
     }

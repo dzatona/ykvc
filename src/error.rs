@@ -180,7 +180,7 @@ mod tests {
     #[test]
     fn test_error_debug() {
         let err = YkvcError::YubiKeyNotFound;
-        let debug_str = format!("{:?}", err);
+        let debug_str = format!("{err:?}");
         assert_eq!(debug_str, "YubiKeyNotFound");
     }
 

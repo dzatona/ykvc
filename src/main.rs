@@ -124,11 +124,7 @@ fn ensure_dependencies(os: platform::OS) -> Result<()> {
         return Ok(());
     }
 
-    println!(
-        "{} Missing dependencies: {}",
-        "[WARNING]".yellow().bold(),
-        missing.join(", ")
-    );
+    println!("{} Missing dependencies: {}", "[WARNING]".yellow().bold(), missing.join(", "));
     println!("{} Attempting to install missing dependencies...", "[INFO]".blue().bold());
 
     platform::install_dependencies(os)?;
@@ -172,10 +168,7 @@ fn cmd_info(os: OS) -> Result<()> {
     println!();
 
     if !info.slot2_programmed {
-        println!(
-            "{} Slot 2 is not programmed with HMAC-SHA1",
-            "[WARNING]".yellow().bold()
-        );
+        println!("{} Slot 2 is not programmed with HMAC-SHA1", "[WARNING]".yellow().bold());
         println!("Run {} to program slot 2", "ykvc slot2 program".cyan());
     }
 
@@ -330,10 +323,7 @@ fn cmd_generate(os: OS, output: Option<&str>) -> Result<()> {
 
     if !info.slot2_programmed {
         println!();
-        println!(
-            "{} Slot 2 is not programmed with HMAC-SHA1",
-            "[ERROR]".red().bold()
-        );
+        println!("{} Slot 2 is not programmed with HMAC-SHA1", "[ERROR]".red().bold());
         println!();
         println!("Please program slot 2 first:");
         println!("  {}", "ykvc slot2 program".cyan());
@@ -341,11 +331,7 @@ fn cmd_generate(os: OS, output: Option<&str>) -> Result<()> {
         return Err(error::YkvcError::Slot2NotProgrammed);
     }
 
-    println!(
-        "{} YubiKey ready (Serial: {})",
-        "[SUCCESS]".green().bold(),
-        info.serial.yellow()
-    );
+    println!("{} YubiKey ready (Serial: {})", "[SUCCESS]".green().bold(), info.serial.yellow());
     println!();
 
     // Prompt for challenge phrase (with password input, no echo)
@@ -404,10 +390,7 @@ fn cmd_test(os: OS) -> Result<()> {
 
     if !info.slot2_programmed {
         println!();
-        println!(
-            "{} Slot 2 is not programmed with HMAC-SHA1",
-            "[ERROR]".red().bold()
-        );
+        println!("{} Slot 2 is not programmed with HMAC-SHA1", "[ERROR]".red().bold());
         println!();
         println!("Please program slot 2 first:");
         println!("  {}", "ykvc slot2 program".cyan());
@@ -415,11 +398,7 @@ fn cmd_test(os: OS) -> Result<()> {
         return Err(error::YkvcError::Slot2NotProgrammed);
     }
 
-    println!(
-        "{} YubiKey ready (Serial: {})",
-        "[SUCCESS]".green().bold(),
-        info.serial.yellow()
-    );
+    println!("{} YubiKey ready (Serial: {})", "[SUCCESS]".green().bold(), info.serial.yellow());
     println!();
 
     // Prompt for test challenge phrase (with password input)
@@ -439,7 +418,14 @@ fn cmd_test(os: OS) -> Result<()> {
     println!("{} Challenge-Response Test", "[SUCCESS]".green().bold());
     println!();
     println!("{}", "Test Results:".bold());
-    println!("  Challenge:  {}", if challenge.is_empty() { "<empty>".bright_black().to_string() } else { format!("{} characters", challenge.len()).yellow().to_string() });
+    println!(
+        "  Challenge:  {}",
+        if challenge.is_empty() {
+            "<empty>".bright_black().to_string()
+        } else {
+            format!("{} characters", challenge.len()).yellow().to_string()
+        }
+    );
     println!("  Response (hex):");
     println!("    {}", hex::encode(&response).bright_yellow());
     println!("  Response (bytes):  {}", response.len().to_string().yellow());
@@ -493,14 +479,12 @@ mod tests {
         let secret = "0123456789abcdef01234567890abcdef0123456";
         let cli = Cli::parse_from(["ykvc", "slot2", "restore", secret]);
         match cli.command {
-            Commands::Slot2 { action } => {
-                match action {
-                    Slot2Commands::Restore { secret: s } => {
-                        assert_eq!(s, secret);
-                    }
-                    _ => panic!("Expected Restore command"),
+            Commands::Slot2 { action } => match action {
+                Slot2Commands::Restore { secret: s } => {
+                    assert_eq!(s, secret);
                 }
-            }
+                _ => panic!("Expected Restore command"),
+            },
             _ => panic!("Expected Slot2 command"),
         }
     }
@@ -541,7 +525,7 @@ mod tests {
     #[test]
     fn test_cli_debug() {
         let cli = Cli::parse_from(["ykvc", "info"]);
-        let debug_str = format!("{:?}", cli);
+        let debug_str = format!("{cli:?}");
         assert!(debug_str.contains("Cli"));
         assert!(debug_str.contains("Info"));
     }
@@ -549,24 +533,22 @@ mod tests {
     #[test]
     fn test_commands_enum_debug() {
         let cmd = Commands::Info;
-        let debug_str = format!("{:?}", cmd);
+        let debug_str = format!("{cmd:?}");
         assert_eq!(debug_str, "Info");
     }
 
     #[test]
     fn test_slot2_commands_enum_debug() {
         let cmd = Slot2Commands::Check;
-        let debug_str = format!("{:?}", cmd);
+        let debug_str = format!("{cmd:?}");
         assert_eq!(debug_str, "Check");
 
         let cmd = Slot2Commands::Program;
-        let debug_str = format!("{:?}", cmd);
+        let debug_str = format!("{cmd:?}");
         assert_eq!(debug_str, "Program");
 
-        let cmd = Slot2Commands::Restore {
-            secret: "test".to_string(),
-        };
-        let debug_str = format!("{:?}", cmd);
+        let cmd = Slot2Commands::Restore { secret: "test".to_string() };
+        let debug_str = format!("{cmd:?}");
         assert!(debug_str.contains("Restore"));
         assert!(debug_str.contains("test"));
     }
