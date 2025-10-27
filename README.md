@@ -20,7 +20,25 @@ A command-line utility for generating cryptographic keyfiles using YubiKey hardw
 
 ## Installation
 
-### From Release (Recommended)
+### Quick Install (Recommended)
+
+Download the latest version with a single command:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/dzatona/ykvc/main/install.sh | bash
+```
+
+This script will:
+- Automatically detect your OS and architecture
+- Download the latest release from GitHub
+- Extract it to the current directory
+- Clean up the archive file
+
+**Supported platforms:**
+- macOS (Apple Silicon & Intel)
+- Ubuntu/Debian (x86_64)
+
+### Manual Installation
 
 Download the latest binary for your platform from [Releases](https://github.com/dzatona/ykvc/releases):
 
