@@ -20,8 +20,6 @@ A command-line utility for generating cryptographic keyfiles using YubiKey hardw
 
 ## Installation
 
-### Quick Install (Recommended)
-
 Download the latest version with a single command:
 
 ```bash
@@ -37,26 +35,6 @@ This script will:
 **Supported platforms:**
 - macOS (Apple Silicon & Intel)
 - Ubuntu/Debian (x86_64)
-
-### Manual Installation
-
-Download the latest binary for your platform from [Releases](https://github.com/dzatona/ykvc/releases):
-
-**macOS (Apple Silicon & Intel):**
-```bash
-curl -LO https://github.com/dzatona/ykvc/releases/latest/download/ykvc-{{VERSION}}-universal-apple-darwin.tar.gz
-tar xzf ykvc-{{VERSION}}-universal-apple-darwin.tar.gz
-cd ykvc-{{VERSION}}-universal-apple-darwin
-./ykvc --help
-```
-
-**Ubuntu/Debian (x86_64):**
-```bash
-curl -LO https://github.com/dzatona/ykvc/releases/latest/download/ykvc-{{VERSION}}-x86_64-unknown-linux-gnu.tar.gz
-tar xzf ykvc-{{VERSION}}-x86_64-unknown-linux-gnu.tar.gz
-cd ykvc-{{VERSION}}-x86_64-unknown-linux-gnu
-./ykvc --help
-```
 
 ### From Source
 
