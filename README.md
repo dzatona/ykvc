@@ -4,6 +4,7 @@
 [![codecov](https://codecov.io/gh/dzatona/ykvc/branch/main/graph/badge.svg)](https://codecov.io/gh/dzatona/ykvc)
 [![CI](https://github.com/dzatona/ykvc/actions/workflows/ci.yml/badge.svg)](https://github.com/dzatona/ykvc/actions/workflows/ci.yml)
 [![Release](https://github.com/dzatona/ykvc/actions/workflows/release.yml/badge.svg)](https://github.com/dzatona/ykvc/actions/workflows/release.yml)
+[![Security Audit](https://github.com/dzatona/ykvc/actions/workflows/audit.yml/badge.svg)](https://github.com/dzatona/ykvc/actions/workflows/audit.yml)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 A command-line utility for generating cryptographic keyfiles using YubiKey hardware tokens for use with VeraCrypt encrypted containers.
