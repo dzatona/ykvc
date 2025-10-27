@@ -24,17 +24,19 @@ A command-line utility for generating cryptographic keyfiles using YubiKey hardw
 
 Download the latest binary for your platform from [Releases](https://github.com/dzatona/ykvc/releases):
 
-**macOS:**
+**macOS (Apple Silicon & Intel):**
 ```bash
-curl -LO https://github.com/dzatona/ykvc/releases/latest/download/ykvc-macos.tar.gz
-tar xzf ykvc-macos.tar.gz
+curl -LO https://github.com/dzatona/ykvc/releases/latest/download/ykvc-{{VERSION}}-universal-apple-darwin.tar.gz
+tar xzf ykvc-{{VERSION}}-universal-apple-darwin.tar.gz
+cd ykvc-{{VERSION}}-universal-apple-darwin
 ./ykvc --help
 ```
 
-**Ubuntu/Debian:**
+**Ubuntu/Debian (x86_64):**
 ```bash
-curl -LO https://github.com/dzatona/ykvc/releases/latest/download/ykvc-linux.tar.gz
-tar xzf ykvc-linux.tar.gz
+curl -LO https://github.com/dzatona/ykvc/releases/latest/download/ykvc-{{VERSION}}-x86_64-unknown-linux-gnu.tar.gz
+tar xzf ykvc-{{VERSION}}-x86_64-unknown-linux-gnu.tar.gz
+cd ykvc-{{VERSION}}-x86_64-unknown-linux-gnu
 ./ykvc --help
 ```
 
