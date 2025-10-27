@@ -1,7 +1,7 @@
 # YKVC — YubiKey VeraCrypt CLI
 
 [![Rust](https://img.shields.io/badge/rust-1.75%2B-orange.svg)](https://www.rust-lang.org)
-[![codecov](https://codecov.io/gh/dzatona/ykvc/branch/main/graph/badge.svg)](https://codecov.io/gh/dzatona/ykvc)
+[![codecov](https://codecov.io/gh/dzatona/ykvc/graph/badge.svg?token=OQ24W8WEDJ)](https://codecov.io/gh/dzatona/ykvc)
 [![CI](https://github.com/dzatona/ykvc/actions/workflows/ci.yml/badge.svg)](https://github.com/dzatona/ykvc/actions/workflows/ci.yml)
 [![Release](https://github.com/dzatona/ykvc/actions/workflows/release.yml/badge.svg)](https://github.com/dzatona/ykvc/actions/workflows/release.yml)
 [![Security Audit](https://github.com/dzatona/ykvc/actions/workflows/audit.yml/badge.svg)](https://github.com/dzatona/ykvc/actions/workflows/audit.yml)
