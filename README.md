@@ -36,15 +36,6 @@ This script will:
 - macOS (Apple Silicon & Intel)
 - Ubuntu/Debian (x86_64)
 
-### From Source
-
-```bash
-git clone https://github.com/dzatona/ykvc.git
-cd ykvc
-cargo build --release
-./target/release/ykvc --help
-```
-
 ## Quick Start
 
 ### 1. First-Time Setup
