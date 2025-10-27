@@ -1,0 +1,37 @@
+[package]
+name = "ykvc"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.75"
+license = "MIT"
+repository = "https://github.com/dzatona/ykvc"
+readme = "README.md"
+description = "YubiKey VeraCrypt CLI utility for generating cryptographic keyfiles"
+categories = ["command-line-utilities", "cryptography"]
+keywords = ["yubikey", "veracrypt", "hmac", "keyfile", "challenge-response"]
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+dialoguer = "0.11"
+anyhow = "1.0"
+thiserror = "1.0"
+rand = "0.8"
+hex = "0.4"
+secrecy = "0.8"
+colored = "2.1"
+
+[dev-dependencies]
+tempfile = "3.8"
+assert_cmd = "2.0"
+predicates = "3.0"
+proptest = "1.4"
+
+[profile.dev]
+debug = true
+overflow-checks = true
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+panic = "abort"

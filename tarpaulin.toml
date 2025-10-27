@@ -1,0 +1,17 @@
+[default]
+# Coverage configuration for cargo-tarpaulin
+command = "test"
+timeout = "300s"
+fail-under = 90.0
+out = ["Html", "Xml", "Lcov"]
+output-dir = "target/coverage"
+engine = "llvm"
+count = true
+all-features = false
+follow-exec = false
+run-types = ["Tests", "Doctests"]
+exclude-files = [
+    "*/tests/*",
+    "*/target/*",
+    "*/.cargo/*",
+]

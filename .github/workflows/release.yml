@@ -1,0 +1,146 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+env:
+  RUST_BACKTRACE: 1
+  CARGO_TERM_COLOR: always
+
+jobs:
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      version: ${{ steps.version.outputs.VERSION }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Create release notes
+        run: |
+          VERSION=${{ steps.version.outputs.VERSION }}
+          cat > release-notes.md << EOF
+          # YKVC v${VERSION}
+
+          YubiKey VeraCrypt CLI utility for generating cryptographic keyfiles.
+
+          ## Installation
+
+          ### macOS (Universal: Intel + Apple Silicon)
+          \`\`\`bash
+          curl -LO https://github.com/${{ github.repository }}/releases/download/v${VERSION}/ykvc-${VERSION}-universal-apple-darwin.tar.gz
+          tar xzf ykvc-${VERSION}-universal-apple-darwin.tar.gz
+          ./ykvc --help
+          \`\`\`
+
+          ### Linux (x86_64)
+          \`\`\`bash
+          curl -LO https://github.com/${{ github.repository }}/releases/download/v${VERSION}/ykvc-${VERSION}-x86_64-unknown-linux-gnu.tar.gz
+          tar xzf ykvc-${VERSION}-x86_64-unknown-linux-gnu.tar.gz
+          ./ykvc --help
+          \`\`\`
+
+          ## Verification
+
+          SHA256 checksums are provided for all artifacts.
+
+          ## Quick Start
+
+          1. Program YubiKey slot 2: \`ykvc slot2 program\`
+          2. Generate keyfile: \`ykvc generate\`
+          3. Use keyfile with VeraCrypt
+
+          See [README](https://github.com/${{ github.repository }}/blob/main/README.md) for full documentation.
+          EOF
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: release-notes.md
+          draft: false
+          prerelease: ${{ contains(steps.version.outputs.VERSION, '-') }}
+
+  build-macos:
+    name: Build macOS Universal
+    needs: create-release
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-apple-darwin,aarch64-apple-darwin
+
+      - name: Build x86_64
+        run: cargo build --release --target x86_64-apple-darwin
+
+      - name: Build aarch64
+        run: cargo build --release --target aarch64-apple-darwin
+
+      - name: Create universal binary
+        run: |
+          mkdir -p target/universal-apple-darwin/release
+          lipo -create \
+            target/x86_64-apple-darwin/release/ykvc \
+            target/aarch64-apple-darwin/release/ykvc \
+            -output target/universal-apple-darwin/release/ykvc
+          chmod +x target/universal-apple-darwin/release/ykvc
+
+      - name: Create archive
+        run: |
+          cd target/universal-apple-darwin/release
+          tar czf ykvc-${{ needs.create-release.outputs.version }}-universal-apple-darwin.tar.gz ykvc
+          shasum -a 256 ykvc-${{ needs.create-release.outputs.version }}-universal-apple-darwin.tar.gz > ykvc-${{ needs.create-release.outputs.version }}-universal-apple-darwin.tar.gz.sha256
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            target/universal-apple-darwin/release/ykvc-${{ needs.create-release.outputs.version }}-universal-apple-darwin.tar.gz
+            target/universal-apple-darwin/release/ykvc-${{ needs.create-release.outputs.version }}-universal-apple-darwin.tar.gz.sha256
+
+  build-linux:
+    name: Build Linux x86_64
+    needs: create-release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build release
+        run: cargo build --release --target x86_64-unknown-linux-gnu
+
+      - name: Create archive
+        run: |
+          cd target/x86_64-unknown-linux-gnu/release
+          tar czf ykvc-${{ needs.create-release.outputs.version }}-x86_64-unknown-linux-gnu.tar.gz ykvc
+          sha256sum ykvc-${{ needs.create-release.outputs.version }}-x86_64-unknown-linux-gnu.tar.gz > ykvc-${{ needs.create-release.outputs.version }}-x86_64-unknown-linux-gnu.tar.gz.sha256
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            target/x86_64-unknown-linux-gnu/release/ykvc-${{ needs.create-release.outputs.version }}-x86_64-unknown-linux-gnu.tar.gz
+            target/x86_64-unknown-linux-gnu/release/ykvc-${{ needs.create-release.outputs.version }}-x86_64-unknown-linux-gnu.tar.gz.sha256
