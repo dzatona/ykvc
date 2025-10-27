@@ -1,9 +1,9 @@
 # YKVC — YubiKey VeraCrypt CLI
 
 [![Rust](https://img.shields.io/badge/rust-1.75%2B-orange.svg)](https://www.rust-lang.org)
+[![codecov](https://codecov.io/gh/dzatona/ykvc/branch/main/graph/badge.svg)](https://codecov.io/gh/dzatona/ykvc)
 [![CI](https://github.com/dzatona/ykvc/actions/workflows/ci.yml/badge.svg)](https://github.com/dzatona/ykvc/actions/workflows/ci.yml)
 [![Release](https://github.com/dzatona/ykvc/actions/workflows/release.yml/badge.svg)](https://github.com/dzatona/ykvc/actions/workflows/release.yml)
-[![codecov](https://codecov.io/gh/dzatona/ykvc/branch/main/graph/badge.svg)](https://codecov.io/gh/dzatona/ykvc)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 A command-line utility for generating cryptographic keyfiles using YubiKey hardware tokens for use with VeraCrypt encrypted containers.
